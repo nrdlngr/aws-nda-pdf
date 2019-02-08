@@ -2,6 +2,15 @@
 import PyPDF2
 import sys
 import os
+import argparse
+
+usage_description = '''Adds the standard AWS NDA language footer and a "CONFIDENTIAL" watermark to PDFs.
+
+The output file is named nda-<pdf_file> and is saved to the present working directory.'''
+
+parser = argparse.ArgumentParser(description=usage_description)
+parser.add_argument('pdf_file', nargs=1, help='The path to the PDF file to watermark.')
+args = parser.parse_args()
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -27,7 +36,8 @@ for pageNum in range(0, pdfReader.numPages):
     pageObj.mergePage(pdfWatermarkReader.getPage(0))
     pdfWriter.addPage(pageObj)
 
-resultPdfFileName = 'nda-' + inputFileName
+resultPdfFileName = 'nda-' + os.path.basename(inputFileName)
+
 
 resultPdfFile = open(resultPdfFileName, 'wb')
 pdfWriter.write(resultPdfFile)
